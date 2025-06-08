@@ -1,470 +1,204 @@
-# 2025_NYCU_OOPFP_Image_Processing
+2025_NYCU_OOPFP_Image_Processing 影像處理專案
 
-Last Updated: 2025/05/09
+專案簡介
+這個專案旨在探索如何在不大幅改變圖片視覺效果的前提下，將文字訊息隱藏於圖像之中，並能夠成功解碼還原。除了基本的加密解密功能，我們也鼓勵融入各種影像處理演算法，讓專案更加有趣且具挑戰性。
 
-## ⚠️ 注意
-請妥善使用New E3上的討論區發問!
+想像一下，您需要隱藏一段文字，除了將其背誦或藏匿於某處，還有什麼辦法？沒錯，就是透過加密！本專案結合了影像處理，將文字訊息加密嵌入圖片，如範例所示，即使圖片中隱藏了「I love OOP」字串，外觀也幾乎沒有變化，避免引起他人注意。當然，我們也能從加密後的圖片中解碼出原始字串。
 
-1.  請開啟訂閱!(一旦有人發問或回答，系統會自動寄信到你的信箱通知)  
-2.  非不得已請不要寄信給助教!(如:在討論區發問過一段時間了，但沒有助教理你)
-3.  要寄信的話，麻煩同時寄信給四位助教，我們會盡快回覆!
-4.  如果沒有同時寄給四位助教的話，我們將不會回覆。
-5.  寄信給助教詢問前，請先看一下問題有沒有被問過!  
+除了核心功能，專案也鼓勵實作多種影像處理、文字加密演算法。演示時若能展示這些功能並詳述於結報中，將依內容豐富度與難度給予額外加分！
 
-## 簡介
-假想今天我們想要將一串文字隱藏起來，除了把它背起來銷毀，和把它埋到某個不知名的地方外，還有沒有什麼辦法呢?
-沒錯!就是加密，但為了讓題目更有趣點，我們融入了影像處理，也就是把文字加密進圖像當中!
-![image](https://hackmd.io/_uploads/SyvlHiPgxe.png)
+什麼是數位影像？
+數位影像是電腦處理的視覺資訊表現形式，它與傳統類比影像不同，由離散的像素構成，每個像素包含特定的顏色和亮度資訊，這些像素的排列共同形成了影像的整體視覺內容。
 
-如圖所示，我們在原來的照片中隱藏了"I love OOP"這串文字，但卻沒有讓圖片有太大的變動。(畢竟如果圖片變得太奇怪，可能就會被人看出端倪?)
-當然了，我們也要能夠從加密完的圖片中，解碼出原來的字串。
-若是只有這樣，題目難免有些單調，因此我們也鼓勵同學們上網搜尋與實作各種有關影像處理、文字加密的算法。只要demo時展示功能並附註於結報中，助教們會依照內容豐富度與難度進行額外加分!
+例如：8 位元灰階影像
 
-## Preface: What is Digital Image?
-數位影像是電腦處理的視覺資訊表現形式，與傳統模擬影像不同，它由離散的像素構成，每個像素包含特定的顏色和亮度資訊，而這些像素的排列形成了影像的整體視覺內容。
+位元深度：「8 位元」指每個像素的位深度。在 8 位元的灰階影像中，每個像素有 2 
+8
+  (256) 種可能的值，範圍從 0 (黑色) 到 255 (白色)。
+灰階（明暗程度）：與彩色影像不同，灰階影像包含各種灰色調。在 8 位元灰階影像中，每個像素代表不同的強度水平，其中 0 為黑色，255 為白色，中間為不同深淺的灰色調。
+因此，在電腦圖形中表示灰階影像非常簡單：使用一個二維陣列，每個數值皆落在 0 到 255 的範圍。若是彩色圖片，則將其擴展為包含 RGB 三個通道的三維陣列即可。
 
-e.g. 8 位元灰階影像
-*    位元深度：
-        "8 位元"指的是每個像素的位深度。在 8 位元的灰階影像中，每個像素有 2^8（256）種可能的值，範圍從 0 到 255。
-        
-*    灰階(有多黑/有多白)：
-不同於彩色影像，灰階影像包含各種灰色調。在 8 位元灰階影像中，每個像素代表不同的強度水平，其中 0 為黑色，255 為白色，中間有各種灰色調。
+專案設定與執行
+本專案已預先設定好開發環境，讓您能快速開始。
 
-![image](https://hackmd.io/_uploads/ry0phvoW0.png)
+1. 取得專案程式碼
+請先登入 140.113.201.197 伺服器，然後使用 Git 複製專案：
 
-Ref: [https://processing.org/tutorials/color]
+Bash
 
-![image](https://hackmd.io/_uploads/SkegTwj-0.png)
-   
-因此，在電腦圖形中表示灰階影像是非常簡單的:使用一個二維陣列，裡面每個數值皆落在 0 到 255 的範圍。若是彩色圖片，則將其二維陣列擴展為有RGB三個channel的三維陣列即可。
+# 登入伺服器 (若尚未登入)
+$ ssh your_username@140.113.201.197
 
-![image](https://hackmd.io/_uploads/B1IwawiW0.png)
-
-## Step 1: Play around data loader class
-圖片在存成jpg/png是有經過壓縮加密過的，若是要同學們直接讀取圖片檔，會有不少問題。因此提供data_loader使同學們可以直接得到圖片的像素矩陣及長寬，來進行後續的運算及操作。
-
-以下是data_loader的interface:
-```c=
-class Data_Loader{
-
-public:
-    Data_Loader();
-    ~Data_Loader();
-    int **Load_Gray(string filename, int *w, int *h);
-    int ***Load_RGB(string filename, int *w, int *h);
-    void Dump_Gray(int w, int h, int **pixels, string filename);
-    void Dump_RGB(int w, int h, int ***pixels, string filename);
-    void Display_Gray_X_Server(int w, int h, int **pixels);
-    void Display_RGB_X_Server(int w, int h, int ***pixels);
-    void Display_Gray_ASCII(int w, int h, int **pixels);
-    void Display_RGB_ASCII(int w, int h, int ***pixels);
-    bool List_Directory(string directoryPath, vector<string> &filenames);
-
-private:
-    bool File_Exists(const string &filename);
-};
-```
-
-這些interface的usage:
-*    Load:
-        ```c=
-        int **Load_Gray(string filename, int *w, int *h);
-        int ***Load_RGB(string filename, int *w, int *h);
-        ```
-        給定圖片的路徑，並且設定w與h，最後回傳一個二維(三維)陣列
-
-        ❗️❗️ Load回傳的dynamic allocate memory需要由同學們自己負責刪除，我們會使用valgrind來檢查你們的程式，確保同學們對每一個自己new出來的memory負責。 
-
-*    Dump:
-        ```c=
-        void Dump_Gray(int w, int h, int **pixels, string filename);
-        void Dump_RGB(int w, int h, int ***pixels, string filename);
-        ```
-        給定輸出的w,h,要輸出的二維(三維)陣列與要輸出的圖片檔名，會將圖片輸出成*jpg/*png。
-
-data_loader提供了三種介面來展示圖片: 
-*    1. X_Server
-        使用moba_xterm中的Xserver來跳出視窗來顯示圖片。
-        ```c=
-        void Display_Gray_X_Server(int w, int h, int **pixels);
-        void Display_RGB_X_Server(int w, int h, int ***pixels);
-        ```
-        
-        ![image](https://hackmd.io/_uploads/BJZsWdjZC.png)
- 
-        ❗️❗️ 因為valgrind在mem check時，無法辨認此function的部分macro expansion，因此在做memory leak check時，請不要使用此function。
- 
-*    2. ASCII ART
-        使用" .-+#@"來表示圖片中的明暗程度，將圖片以符號的形式印在terminal。
-        
-        ```c=
-        void Display_Gray_ASCII(int w, int h, int **pixels);
-        void Display_RGB_ASCII(int w, int h, int ***pixels);
-        ```
-        ![image](https://hackmd.io/_uploads/HJvPGdiWC.png)
-
-*    filename iterator
-
-        同學們可能會需要處理多張照片，這邊提供一個method，來將某資料夾下的所有檔案名稱存進filenames的vector中。
-
-        ```c=
-        bool List_Directory(string directoryPath, vector<string> &filenames);
-        ```
-
-## Step 2: Construct image inheritance and polymorphism
-
-透過base class Image，來讓gray_image及rgb_image繼承，來讓同學練習繼承多型及virtual function。需要將第一步所提及的data_loader與這些class整合。來實現load image/dump image/display image，等基礎功能。
-
-繼承關係如下圖:
-![image](https://hackmd.io/_uploads/HJGOMFs-R.png)
-
-
-<details>
-<summary>點我展開繼承詳細指示</summary>
-
-*    Base class: Image
-        
-```cpp =
-        Data member:  
-        *    int w(protected)
-        *    int h(protected)
-        *    Data_Loader data_loader(protected)
-                // data_loader要讓所有image class來共用同一個data_loader，請查詢c++ keyword: static variable
-        
-        Member function(all public):
-        *    Constructor/Destructor
-        *    int get_w()
-        *    int get_h()
-        
-        Pure virtual function(let derived class override, all public):
-        *    bool LoadImage(string filename)
-        *    void DumpImage(string filename)
-        *    void Display_X_Server()
-        *    void Display_ASCII()
-        *    void Display_CMD()
-```
-
-*    Derived class: GrayImage (public inheritance Image)
-
-```cpp =
-        Data member:  
-        *    int **pixels(private)
-
-        Member function(all public):
-        *    Constructor/Destructor
-
-        Override Base class vitual function(all public):
-        *    bool LoadImage(string filename)
-        *    void DumpImage(string filename)
-        *    void Display_X_Server()
-        *    void Display_ASCII()
-        *    void Display_CMD()
-```
-
-*    Derived class: RGBImage (public inheritance Image)
-
-```cpp =
-        Data member:  
-        *    int ***pixels(private)
-
-        Member function(all public):
-        *    Constructor/Destructor
-
-        Override Base class vitual function(all public):
-        *    bool LoadImage(string filename)
-        *    void DumpImage(string filename)
-        *    void Display_X_Server()
-        *    void Display_ASCII()
-        *    void Display_CMD()
-
-```
-
-</details>
-
-⚠️ 同學們需要將Step1所提到的data_loader所提供的method整合進這些class中，並且支援polymorphism中的dynamic binding(late binding/run time polymorphism)。
-
-example:
-```c=
-Image *img1 = new GrayImage();
-img1->LoadImage("Image-Folder/lena.jpg");
-img1->DumpImage("img1.jpg");
-img1->Display_X_Server();
-
-
-Image *img2 = new RGBImage();
-img2->LoadImage("Image-Folder/lena.jpg");
-img2->DumpImage("img2.jpg");
-img2->Display_X_Server();
-```
-1. img1 and img2 are pointers to base class Image.  
-2. GrayImage and RGBImage are derived classes of Image.  
-3. The functions LoadImage, DumpImage, Display_X_Server, and Display_CMD are all virtual functions declared in the Image base class and overridden in the derived classes.
-
-## Step 3: Bit-field with image filter design
-一般圖片在做影像處理演算法時，大多會通過許多次的影像增強演算法或是降躁銳化。因此在這個部分，我們要求學生實作出4種指定的簡單影像處理演算法，並透過使用bit_field的方式調用。
-
-*    Bit field介紹:
-```c=
-//using bitfield to not to force user to passing all of the arguments
-//using bitwise or to passing the options
-//using bitwise and to get the info of the bitfield
-
-#include <stdio.h>
-#include <stdint.h>
-
-#define CASE_ONE    0b00000001
-#define CASE_TWO    0b00000010
-#define CASE_THREE  0b00000100
-#define CASE_FOUR   0b00001000
-
-
-//using bitwise and to track whtat is the user's option
-void loadCase(int8_t option){
-    if(option & CASE_ONE)
-        printf("Case 1 detected\n");
-    if(option & CASE_TWO)
-        printf("Case 2 detected\n");
-    if(option & CASE_THREE)
-        printf("Case 3 detected\n");
-    if(option & CASE_FOUR)
-        printf("Case 4 detected\n");
-    printf("\n");
-    printAndResult(option);
-}
-
-int main(){
-    //test1:
-    uint8_t option = 0b00001001;
-    printf("test1:\n");
-    loadCase(option);
-
-    //test2:
-    printf("test2:\n");
-    loadCase(CASE_ONE | CASE_TWO);
-
-    //test3:
-    printf("test3:\n");
-    loadCase(CASE_ONE | CASE_TWO | CASE_THREE | CASE_FOUR);
-    return 0;
-}
-```
-
-💡 1. 透過`bitwise or` 來load不同的option
-
-💡 2. 透過`bitwise and` 來確認某個option是否有被enable
-
-
-### 以下列出本題指定的4個常見影像處理演算法:
-
-<table>
-  <tr>
-    <th colspan="2" style="text-align:center;">Horizontal Flip(水平翻轉)</th>
-  </tr>
-  <tr>
-    <td align="center"><b>Before</b></td>
-    <td align="center"><b>After</b></td>
-  </tr>
-  <tr>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/HJ16hB9eeg.jpg" width="500"></td>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/Sy-6hH9xgl.jpg" width="500"></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <th colspan="2" style="text-align:center;">Mosaic filter(對照片打碼)</th>
-  </tr>
-  <tr>
-    <td align="center"><b>Before</b></td>
-    <td align="center"><b>After</b></td>
-  </tr>
-  <tr>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/BJ7phHqllx.jpg" width="500"></td>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/Sk4T2rcxel.png" width="500"></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <th colspan="2" style="text-align:center;">Gaussian filter(降噪並模糊化)</th>
-  </tr>
-  <tr>
-    <td align="center"><b>Before</b></td>
-    <td align="center"><b>After</b></td>
-  </tr>
-  <tr>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/Hy9zKB9exx.jpg" width="500"></td>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/ByqVtrqxel.jpg" width="500"></td>
-  </tr>
-</table>
-
-<table>
-  <tr>
-    <th colspan="2" style="text-align:center;">Laplacian filter(影像銳化)</th>
-  </tr>
-  <tr>
-    <td align="center"><b>Before</b></td>
-    <td align="center"><b>After</b></td>
-  </tr>
-  <tr>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/ByIa2Hqlxx.jpg" width="500"></td>
-    <td style="text-align:center;"><img src="https://hackmd.io/_uploads/Bkva2B9gle.jpg" width="500"></td>
-  </tr>
-</table>
-
-
-⚠️ 預期同學實作任意四種以上的圖片影像處理的演算法，並透過bit field的概念來決定要enable哪幾個演算法。
-
-
-## Step 4: Image encryption
-
-給定一字串，設法在不大幅變動該圖片的前提下，將該字串的資訊存入圖片(可自行準備)，並能夠解碼出來。
-
-學生需要撰寫一個class ImageEncryption，並且與前面所建立好關係的Image繼承鍊及data loader整合，撰寫image encryption的演算法，並提供函式介面給使用者。
-*    encode: 傳入欲加密的字串與儲存的圖像路徑，而後回傳一個指標指向加密後的彩圖物件。
-*    decode: 傳入一個指標指向加密後的彩圖物件，而後回傳解碼出來的字串。
-
-參考方法: LSB strategy
-由於微小R/G/B值的變動並不容易被人類的肉眼察覺，因此我們可以將資訊存在不同pixel channel的LSB(Least Significant Bit)，儲存順序可以依照raster-scan order或是其他遍歷法都可以。而還原方式也非常簡單，只要依照儲存順序將位元重新組合回來即可。
-![image](https://hackmd.io/_uploads/SknJIJ_xle.png)
-
-**LSB strategy**
-
-💡 1. 將字串依ASCII轉換成二進位序列。
-
-💡 2. 依raster-scan order或其他順序，將獲得的二進位序列存入pixel中R/G/B等channel的LSB。
-
-💡 3. 將上述步驟倒過來即為解碼。
-
-![image](https://hackmd.io/_uploads/HkoZFkdlle.png)
-
-⚠️同學們可以在必要的情況下，針對class image gray_image rgb_image增加operator overloading/resize/crop等method，來協助實作image encryption的部分。
-
-## Driven Code for Step1~4
-希望同學們能夠設計一個清晰且優雅的使用者流程讓上面Step1~4與您所設計的加分項目都可以被demo到。若是單一一個main.cpp不夠您demo所有的功能，您可以自行設計其他driven code的檔案，並且更改`Makefile`中相關編譯的dependency與方法。
-
-    
-## Project Setup
-```bash=
-# login 140.113.201.197 only
-$ git clone https://github.com/therealczr15/2025_NYCU_OOPFP_Image_Processing.git
+# 複製專案 (來自您的 GitHub repository)
+$ git clone https://github.com/benjaminliao7130/2025_NYCU_OOPFP_Image_Processing.git
 $ cd 2025_NYCU_OOPFP_Image_Processing/
+2. 安裝第三方套件
+專案依賴一些第三方函式庫來處理圖片 I/O。請執行 make install 來安裝這些必要的套件：
 
-# install the third party package
+Bash
+
 $ make install
+這會自動執行 scripts/clone_env.sh 腳本，配置好編譯所需的環境。
 
-# start programing your final project
-# finish *.h in inc/ & *.cpp in src & main.cpp
+3. 編譯專案
+完成程式碼撰寫後（您可能會修改 inc/ 中的 .h 檔案、src/ 中的 .cpp 檔案以及 main.cpp），您可以使用 make 指令來編譯專案：
 
-# compile
-$ make               # default
-$ make VERBOSE=1     # check out what make actually do
-$ make -j            # compile in parallel (save time, suggest)
+Bash
 
-# run your program
+# 預設編譯
+$ make
+
+# 查看 make 實際執行了哪些指令 (除錯用)
+$ make VERBOSE=1
+
+# 平行編譯 (建議使用，可節省時間)
+$ make -j
+Makefile 會自動識別檔案的依賴關係，在您修改部分檔案後，只會重新編譯需要更新的部分，搭配平行編譯，能顯著提升開發效率。
+
+4.創建資料夾
+$ mkdir puzzle 
+用於存放每一塊拼圖
+
+5. 執行程式
+編譯成功後，您可以執行 Image_Processing 可執行檔：
+
+Bash
+
 $ ./Image_Processing
+程式操作介面說明 (UI 流程)
+執行 ./Image_Processing 後，程式會引導您進行以下操作：
 
-# Dynamic memory check (Need to disable the Display_X_Server...)
-$ make check
-```
-## Project Structure
+1. 選擇模式
+===== Image System =====
+Select mode:
+1. Puzzle Game
+2. Image Processor
+Choice:
+1. Puzzle Game：選擇此項將進入拼圖遊戲模式。
+2. Image Processor：選擇此項將進入影像處理與加解密模式。
+若選擇 1. Puzzle Game：
+程式將直接進入拼圖遊戲的執行流程，您可以根據遊戲提示進行操作，拼圖會存放於puzzle資料夾中。
 
-```bash=
-# show出project structure
-$ tree -L 2
-```
-                    ├── Data-Loader(處理image I/O)
-                    │   ├── data_loader.cpp
-                    │   └── data_loader.h
-                    ├── data_loader_demo.cpp(示範如何使用data_loader Step1)
-                    ├── Image-Folder(放圖片的地方)
-                    │   ├── 1-1.jpg
-                    │   ├── 1-2.jpg
-                    │   ├── 2-1.jpg
-                    │   ├── 2-2.jpg
-                    │   ├── 3-1.jpg
-                    │   ├── 3-2.jpg
-                    │   ├── 4-1.jpg
-                    │   ├── 4-2.jpg
-                    │   ├── lena.jpg
-                    │   └── truck.png
-                    ├── inc (put your header here)
-                    │   ├── bit_field_filter.h
-                    │   ├── gray_image.h
-                    │   ├── image_encryption.h
-                    │   ├── image.h
-                    │   └── rgb_image.h
-                    ├── LICENSE
-                    ├── main.cpp(Driven code)
-                    ├── Makefile
-                    ├── README.md
-                    ├── scripts
-                    │   └── clone_env.sh
-                    ├── src (put your implementation here)
-                    │   ├── bit_field_filter.cpp
-                    │   ├── gray_image.cpp
-                    │   ├── image.cpp
-                    │   ├── image_encryption.cpp
-                    │   └── rgb_image.cpp
-                    └── third-party(第三方開源圖片套件)
-                        ├── catimg
-                        ├── CImg
-                        └── libjpeg
+若選擇 2. Image Processor：
+程式將進入影像處理功能，並開始引導您選擇圖片和操作。
 
-將class header interface放在inc folder內部，並且將source code的實作放在src folder內部，makefile會自動去識別dependency，並且在您對某些檔案進行修改後，僅編譯需要重新編譯之檔案，不會整份project重新編譯一次，如此一來再搭配上parallel compile，讓您再開發上能夠節省不少時間。
+2. 載入圖片
+===== Image Processor =====
+Enter image filename (in Image-Folder):
+請輸入您要處理的圖片檔名（例如：lena.jpg）。請確保該圖片檔已放置在專案根目錄下的 Image-Folder/ 資料夾內。
 
-## Bonus
-*    Upload project to github。(需附上project repo) [ref link](https://github.com/twtrubiks/Git-Tutorials)  
-        
-     * 比較完整的git/github教學:
+3. 選擇圖片類型
+Select image type:
+1. Gray Image
+2. RGB Image
+Choice:
+1. Gray Image：處理灰階圖片。
+2. RGB Image：處理彩色圖片。
+特殊情況處理：
+如果您輸入的檔名包含 _enc 字樣（表示此圖片可能已被加密，例如：my_image_enc.png），並且您此時選擇了「Gray Image」，系統會提示：
 
-       [![Git 和 GitHub 零基礎快速上手](https://img.youtube.com/vi/FKXRiAiQFiY/0.jpg)](https://www.youtube.com/watch?v=FKXRiAiQFiY)
+This file seems to be encrypted. Gray Image cannot be decrypted.
+Are you sure you want to choose Gray Image? (y/n):
+這是因為灰階圖片通常不支援本專案的解密操作。此時，若您確認要繼續處理為灰階圖片，請輸入 y；否則輸入 n 將會讓您重新選擇圖片類型。
 
-*    More image filters
-        *    fisheye filter
-        *    cold/warm adjustment
-        *    luminance enhancement
+4. 選擇濾鏡 (Bit-field 操作)
+Select filters to apply (bitfield, e.g., 3 = Flip + Mosaic):
+0. Skip
+1. Flip
+2. Mosaic
+4. Gaussian
+8. Laplacian
+16. Restore
+Enter:
+請輸入一個整數作為 bitfield 值，以啟用一個或多個濾鏡。每個濾鏡對應一個特定的位元值，您可以將它們的位元值相加來組合多重效果（例如輸入 3 代表同時啟用 Flip (1) 和 Mosaic (2)）。
 
-*    Other encryption/decryption methods
-        *    XOR encryption
-        *    Caesar Cipher
-        *    Substitution Cipher
+濾鏡功能說明：
 
-*    Photo Mosaic(小圖組大圖)
-        *    Photo Mosaic with only 1 picture [IEEE paper](https://ieeexplore.ieee.org/document/7965140)
-        ![image](https://hackmd.io/_uploads/r171Wpq-C.png)
-        *    Parallel Algorithm Implementation(MPI/pthread/cuda): NTHU PP周志遠教授
+Flip (1)：水平翻轉圖片。
+Mosaic (2)：對圖片區域打上馬賽克效果。
+Gaussian (4)：應用高斯模糊濾鏡，通常用於圖片降噪。
+Laplacian (8)：應用拉普拉斯銳化濾鏡，常用於增強圖片邊緣細節。
+Restore (16)：此為還原濾鏡，您可以根據專案實作自行定義其具體功能（例如：逆向濾鏡、去噪等）。
+加密圖片與濾鏡的交互提示：
+如果載入的圖片檔名包含 _enc 且您選擇了任何濾鏡（即 bitfield > 0），系統會提示：
 
-        
-⚠️ 以上為助教們推薦的幾個加分題的方向，學生不需要侷限在這些題目中，可以自行發想有趣的題目。
+This file seems to be encrypted. Applying filters may destroy the hidden message.
+Are you sure you want to apply bitfield value [bitfield]? (y/n):
+此提示旨在提醒您，濾鏡操作可能會破壞隱藏在圖片中的訊息。若您確認要繼續應用濾鏡，請輸入 y；否則輸入 n 將取消濾鏡應用。
 
-## Submission
-*    時間: 2025/06/08 23:59
-*    繳交檔案: `Student_ID.tar` & `Student_ID.pdf`
-        ```bash=
-        # 產生壓縮檔
-        $ ls # 確認已跳到2025_NYCU_OOPFP_Image_Processing外面
-        $ tar cvf Student_ID.tar 2025_NYCU_OOPFP_Image_Processing/
-        $ ls # 產生Student_ID.tar -> submit to e3
+5. 圖片加解密操作 (僅限 RGB 圖片)
+此步驟僅在您選擇了 RGB Image 且在步驟 4 中未選擇任何濾鏡 (bitfield == 0) 時才會觸發。
 
-        # 解壓縮
-        $ tar xvf Student_ID.tar
-        ```
+5.1. 解密已加密圖片
+如果載入的圖片檔名包含 _enc 字樣，程式會詢問：
 
-⚠️請確認解壓縮後，可以在linux server上成功編譯並且執行。
+This file seems to be encrypted. Do you want to attempt decryption? (y/n):
+輸入 y 將嘗試解密。解密結果（原始訊息）會直接顯示在終端機上。若解密成功，程式會跳過後續的儲存步驟。若解密失敗，會提示相應的錯誤訊息。
 
-## Demo
-*    時間: 未定
-*    地點: 未定
+5.2. 加密新訊息
+如果載入的圖片檔名不包含 _enc 字樣，且 bitfield == 0，程式會詢問：
 
-⚠️在Linux中運行程式，詳細的呈現每一項功能，沒有demo的組別期末專題0分
+Encrypt a message? (y/n):
+輸入 y 後，程式會提示您輸入要加密的訊息（請注意訊息長度限制 &lt; 100 字元）：
 
-## Thanks for the following open source projects
-*   CImg (https://github.com/GreycLab/CImg)
-*   libjpeg (https://github.com/kornelski/libjpeg)
-*   catimg (https://github.com/posva/catimg)
+Enter message (length < 100):
+若加密成功，程式會將圖片內部標記為已加密狀態，並在後續的儲存步驟中將輸出檔名自動改為 _enc 結尾。若加密失敗（例如訊息過長），會提示錯誤並詢問您是否要重試。
 
-## QA
-        
-## 最終成果(github link)
+6. 濾鏡應用與結果預覽
+根據您在步驟 4 中選擇的 bitfield 值，程式會對圖片應用相應的濾鏡效果。
+在圖片儲存之前，您可以選擇預覽處理後的結果：
 
+View result before saving?
+0. Skip
+1. Show by XServer
+2. Show by ASCII
+Choice:
+0. Skip：不進行預覽。
+1. Show by XServer：使用 X Server 顯示圖片。請確保您的本機環境（如 MobaXterm 等）已正確配置 X Server，否則可能無法正常顯示。重要提示：在進行記憶體檢查 (valgrind) 時，請務必避免使用此功能，以避免產生誤報。
+2. Show by ASCII：在終端機中以 ASCII 字符藝術形式顯示圖片的簡略預覽。
+7. 儲存圖片
+Save result? (y/n):
+輸入 y 將會把處理後的圖片儲存到 Image-Folder/ 資料夾中。輸出檔名會根據您執行的操作自動加上後綴（例如：lena_rgb_flip_enc.png）。如果圖片經過加密，最終會儲存為 .png 格式；否則，會儲存為 .jpg 格式。
+
+專案結構
+Bash
+
+# 在專案根目錄執行 'tree -L 2' 可查看
+.
+├── Data-Loader            # 處理圖片 I/O 相關功能
+│   ├── data_loader.cpp
+│   └── data_loader.h
+├── data_loader_demo.cpp   # 示範如何使用 data_loader (Step 1)
+├── Image-Folder           # 預設存放圖片的資料夾，您的圖片應放置於此
+│   ├── 1-1.jpg
+│   ├── ...
+│   └── truck.png
+├── puzzle                 # 變成拼圖的圖片會存放於此
+├── inc                    # 存放所有頭文件 (.h)
+│   ├── bit_field_filter.h
+│   ├── gray_image.h
+│   ├── image_encryption.h
+│   ├── image.h
+│   ├── image_restore.h    # 新增的圖片還原濾鏡頭文件
+│   ├── puzzle_game.h      # 新增的拼圖遊戲頭文件
+│   └── rgb_image.h
+├── LICENSE
+├── main.cpp               # 專案主程式 (Driven code)
+├── Makefile               # 自動化編譯流程設定
+├── README.md              # 本說明文件
+├── scripts
+│   └── clone_env.sh       # 環境設置腳本，由 make install 呼叫
+├── src                    # 存放所有實作檔案 (.cpp)
+│   ├── bit_field_filter.cpp
+│   ├── gray_image.cpp
+│   ├── image.cpp
+│   ├── image_encryption.cpp
+│   ├── image_restore.cpp  # 新增的圖片還原濾鏡實作
+│   ├── puzzle_game.cpp    # 新增的拼圖遊戲實作
+│   └── rgb_image.cpp
+└── third-party            # 第三方開源圖片處理函式庫
+    ├── catimg
+    ├── CImg
+    └── libjpeg
+說明：
+我們將 class 的頭文件介面定義在 inc/ 資料夾內部，並將其原始碼實作放在 src/ 資料夾內部。Makefile 會自動識別文件間的依賴關係，當您修改部分檔案後，make 指令將只會重新編譯需要更新的部分，搭配 -j 參數進行平行編譯，能讓您在開發上節省不少時間。
