@@ -18,14 +18,13 @@ public:
     void Display_CMD() override;
 
     void applyFilters(int bitfield);
-    void applyMosaic(int blockSize = 8);  
+    void applyMosaic(int blockSize = 4);  
     void applyFlip();
     void applyGaussian();
     void applyLaplacian();
     
     int** getData() const { return data; }
     
-    void Resize(int newW, int newH);
     void setSize(int width, int height);
 };
 

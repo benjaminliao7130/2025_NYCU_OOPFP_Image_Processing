@@ -121,17 +121,6 @@ void GrayImage::applyLaplacian() {
     delete[] new_data;
 }
 
-void GrayImage::Resize(int newW, int newH) {
-    if (data) {
-        for (int i = 0; i < height; ++i) delete[] data[i];
-        delete[] data;
-    }
-    width = newW;
-    height = newH;
-    data = new int*[height];
-    for (int i = 0; i < height; ++i)
-        data[i] = new int[width]{};
-}
 
 void GrayImage::setSize(int w, int h) {
     width = w;

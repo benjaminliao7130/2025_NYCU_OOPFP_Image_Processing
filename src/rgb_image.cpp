@@ -157,24 +157,7 @@ void RGBImage::applyLaplacian() {
     delete[] new_data;
 }
 
-void RGBImage::Resize(int newW, int newH) {
-    if (data) {
-        for (int i = 0; i < height; ++i) {
-            for (int j = 0; j < width; ++j)
-                delete[] data[i][j];
-            delete[] data[i];
-        }
-        delete[] data;
-    }
-    width = newW;
-    height = newH;
-    data = new int**[height];
-    for (int i = 0; i < height; ++i) {
-        data[i] = new int*[width];
-        for (int j = 0; j < width; ++j)
-            data[i][j] = new int[3]{};
-    }
-}
+
 
 void RGBImage::setSize(int w, int h) {
     width = w;

@@ -166,7 +166,7 @@ int main() {
         if (op == 'y') {
             string outname;
             if (encrypted)
-                outname = "Image-Folder/" + filename.substr(0, filename.find_last_of('.')) + postfix + ".bmp";
+                outname = "Image-Folder/" + filename.substr(0, filename.find_last_of('.')) + postfix + ".png";
             else
                 outname = "Image-Folder/" + filename.substr(0, filename.find_last_of('.')) + postfix + ".jpg";
 
