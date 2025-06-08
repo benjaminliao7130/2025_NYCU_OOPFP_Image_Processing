@@ -25,7 +25,7 @@ ssh your_username@140.113.201.197
 
 git clone https://github.com/benjaminliao7130/2025_NYCU_OOPFP_Image_Processing.git
 
-cd 2025_NYCU_OOPFP_Image_Processing/
+cd 2025_NYCU_OOPFP_Image_Processing-main/
 
 2️⃣ 安裝依賴套件
 bash
