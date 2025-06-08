@@ -1,13 +1,32 @@
-#ifndef _RGB_IMAGE_H_
-#define _RGB_IMAGE_H_
+#ifndef RGB_IMAGE_H
+#define RGB_IMAGE_H
 
 #include "image.h"
 
-class RGBImage : public Image{
-private:
-
+class RGBImage : public Image {
 public:
+    RGBImage();
+    ~RGBImage();
 
+    bool LoadImage(std::string filename) override;
+    void DumpImage(std::string filename) override;
+    void Display_X_Server() override;
+    void Display_ASCII() override;
+    void Display_CMD() override;
+
+    void applyFilters(int bitfield);
+    void applyFlip();
+    void applyMosaic(int blockSize = 8);
+    void applyGaussian();
+    void applyLaplacian();
+
+    int*** getData() const { return data; }
+
+    void Resize(int newW, int newH);
+    void setSize(int width, int height);
+
+private:
+    int*** data;
 };
 
 #endif
