@@ -28,29 +28,25 @@ git clone https://github.com/benjaminliao7130/2025_NYCU_OOPFP_Image_Processing.g
 cd 2025_NYCU_OOPFP_Image_Processing
 
 2️⃣ 安裝依賴套件
-bash
-複製
-編輯
+
 make install
 
 3️⃣ 編譯專案
-bash
-複製
-編輯
+
 make           # 一般編譯
+
 make -j        # 平行編譯（建議）
+
 make VERBOSE=1 # 顯示詳細指令（除錯用）
 
+
 4️⃣ 建立拼圖儲存資料夾（Puzzle 模式使用）
-bash
-複製
-編輯
+
 mkdir puzzle
 
 5️⃣ 執行程式
-bash
-複製
-編輯
+
+
 ./Image_Processing
 ## 🧩 程式操作流程
 ### 📍 選擇模式
